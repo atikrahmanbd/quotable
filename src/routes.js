@@ -6,6 +6,7 @@ import searchQuotes from './controllers/search/searchQuotes.js'
 import searchAuthors from './controllers/search/searchAuthors.js'
 import singleRandomQuote from './controllers/quotes/singleRandomQuote.js'
 import randomQuotes from './controllers/quotes/randomQuotes.js'
+import randomQuote from './controllers/quotes/randomQuote.js'
 import listAuthors from './controllers/authors/listAuthors.js'
 import getAuthorById from './controllers/authors/getAuthorById.js'
 import getAuthorBySlug from './controllers/authors/getAuthorBySlug.js'
@@ -22,7 +23,8 @@ router.get('/info/count', getDocumentCount)
  ** Quotes
  **-----------------------------------------------*/
 router.get('/quotes/random', randomQuotes)
-router.get('/random', singleRandomQuote)
+// router.get('/random', singleRandomQuote)
+router.get('/random', randomQuote)
 
 router.get('/quotes', listQuotes)
 router.get('/quotes/:id', getQuoteById)

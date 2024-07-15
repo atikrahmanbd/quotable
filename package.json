@@ -22,18 +22,23 @@
     "test": "jest --setupFiles dotenv/config --verbose",
     "test:watch": "jest --setupFiles dotenv/config --watchAll --verbose",
     "deploy:production": "heroku pipelines:promote -a quotable-api-staging",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "database:seed": "node scripts/seedDatabase.js"
   },
   "dependencies": {
     "chalk": "^5.0.1",
+    "cli-table3": "^0.6.5",
     "cors": "^2.8.5",
-    "dotenv": "^16.0.1",
+    "dotenv": "^16.4.5",
     "express": "^4.17.1",
     "express-rate-limit": "^6.7.0",
     "http-errors": "^2.0.0",
+    "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
     "mongodb": "^4.7.0",
     "mongoose": "^6.4.0",
+    "ora": "^8.0.1",
+    "punycode": "^2.3.1",
     "query-string": "^7.1.1",
     "shortid": "^2.2.15"
   },
