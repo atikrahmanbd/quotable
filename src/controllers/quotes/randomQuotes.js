@@ -54,7 +54,6 @@ export function parseQuery(rawQuery, defaultFields) {
     const keywords = /content:((\w+)|(\([\w ]+\)))/i
     query = query.replace(keywords, (_, m) => `(content:${m} OR tags:${m} )`)
   }
-
   return { query, error }
 }
 
@@ -101,51 +100,71 @@ export async function getRandomQuotes(params, next) {
 
     // If a `query` parameter was provided, we use $search to select matching
     // quotes. Then, we return `n` random documents from the results
-    if (query) {
+    const $extractedquery = query;
+    
+    if ($extractedquery) {
       if (enableAdvancedQuery) {
-        // [Experimental] Advanced search queries.
-        // @see https://www.mongodb.com/docs/atlas/atlas-search/queryString/
-        // - The default search field is 'content'
-        // - Query can include one or more prefixed search terms that target a
-        //   specific field using the syntax `<field>:<search term>` (for
-        //   example `query=author:john`)
-        // - Query can include logical operators AND, OR, NOT
-        // - Parenthesis can be used to group expressions and terms
-        // - These features can be combined to form complex queries.
-        //   Example: `query=author:adams AND (freedom OR justice)`
-        //   This will match quotes with an author name that includes "adams"
-        //   AND content that matches the terms "freedom" or "justice"
+        
         $search = {
-          queryString: { defaultPath: 'content', query },
+          $search: {
+            index: 'textIndex', // Ensure this matches the name of your text index
+            queryString: {
+              defaultPath: 'content',
+              query: $extractedquery,
+            }
+          }
         }
+      
       } else {
         // Basic queries
         // For regular queries that don't include logical operators or field
         // prefixes, we search 'content' and `tags` using standard text search
         // This will return all quotes that match at least one search term
+        
         $search = {
-          text: { path: defaultFields, query },
+          $search: {
+            index: 'textIndex', // Ensure this matches the name of your text index
+            text: {
+              path: defaultFields,
+              query: $extractedquery,
+            }
+          }
         }
       }
     }
+    
 
+
+    // if ($extractedquery) {
+    //   $search = {
+    //     $search: {
+    //       index: 'textIndex', // Ensure this matches the name of your text index
+    //       queryString: {
+    //         defaultPath: 'content',
+    //         query: $extractedquery,
+    //       },
+    //     },
+    //   };
+    // }
+    // console.log($search);
+    
     // Filter parameters
     const $match = {}
-
+    
     if (minLength || maxLength) {
       $match.length = getLengthFilter(minLength, maxLength)
     }
-
+    
     if (tags) {
       $match.tags = getTagsFilter(tags)
     }
-
+    
     if (authorId) {
       // @deprecated
       // Use the `author` param to filter by author `name` or `slug` instead
       $match.authorId = { $in: authorId.split('|') }
     }
-
+    
     if (author) {
       if (/,/.test(author)) {
         // If `author` is a comma-separated list, respond with an error
@@ -155,19 +174,20 @@ export async function getRandomQuotes(params, next) {
       // Filter quotes by author slug.
       $match.authorSlug = { $in: author.split('|').map(slug) }
     }
-
+    
     if (authorSlug) {
       // @deprecated
       // use `author` param instead
       $match.authorSlug = { $in: author.split('|').map(slug) }
     }
-
+    
     const results = await Quotes.aggregate(
       compact([
         // The $search stage (if a query param was provided)
-        !isEmpty($search) && { $search },
+        !isEmpty($search) && $search,
+        //         
         // Apply filters (if any)
-        { $match },
+        !isEmpty($match) && { $match },
         // Select `n` random quotes from the results, where `n` = `limit`
         { $sample: { size } },
         // Remove hidden properties

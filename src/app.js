@@ -10,7 +10,7 @@ app.use(limiter)
 app.set('trust proxy', 1)
 // Redirect the root URL to the github repository
 app.get('/', (req, res) => {
-  res.redirect('https://github.com/lukePeavey/quotable')
+  res.redirect('http://localhost:4000')
 })
 app.use(routes)
 app.use(handle404)
