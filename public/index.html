@@ -179,7 +179,7 @@
 
         .content-container {
             pointer-events: auto;
-            background: rgba(26, 32, 44, 0.01); /* Matching theme color with transparency */
+            /* background: rgba(26, 32, 44, 0.1); */
             backdrop-filter: blur(3px);
             padding: 2rem 4rem;
             border-radius: 1rem;
@@ -282,14 +282,15 @@
     </div>
 
     <script>
+
         // ==========================================
         // CONFIGURATION
         // ==========================================
         const DOT_GRID_CONFIG = {
             dotSize: 2.5,
             gap: 24,
-            baseColor: '#6b7280', // Gray-500
-            activeColor: '#00EFAE', // Aqua Green
+            baseColor: 'rgba(255, 255, 255, 0.15)', // Translucent White
+            activeColor: 'rgba(0, 239, 174, 1)',   // Aqua Green
             proximity: 150,    // Distance to trigger effect
             shockRadius: 400,  // Radius of click shockwave
             shockStrength: 4,  // Strength of click shockwave
@@ -312,20 +313,36 @@
                 this.pointer = { x: 0, y: 0, lastX: 0, lastY: 0, vx: 0, vy: 0, speed: 0, lastTime: 0 };
                 this.rafId = null;
 
-                this.baseRgb = this.hexToRgb(config.baseColor);
-                this.activeRgb = this.hexToRgb(config.activeColor);
+                this.baseRgb = this.parseColor(config.baseColor);
+                this.activeRgb = this.parseColor(config.activeColor);
 
                 this.init();
             }
 
-            hexToRgb(hex) {
-                const m = hex.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
-                if (!m) return { r: 0, g: 0, b: 0 };
-                return {
-                    r: parseInt(m[1], 16),
-                    g: parseInt(m[2], 16),
-                    b: parseInt(m[3], 16)
-                };
+            parseColor(color) {
+                let r = 0, g = 0, b = 0, a = 1;
+
+                if (color.startsWith('#')) {
+                    const hex = color.replace('#', '');
+                    if (hex.length === 3) {
+                        r = parseInt(hex[0] + hex[0], 16);
+                        g = parseInt(hex[1] + hex[1], 16);
+                        b = parseInt(hex[2] + hex[2], 16);
+                    } else if (hex.length === 6) {
+                        r = parseInt(hex.substring(0, 2), 16);
+                        g = parseInt(hex.substring(2, 4), 16);
+                        b = parseInt(hex.substring(4, 6), 16);
+                    }
+                } else if (color.startsWith('rgb')) {
+                    const values = color.match(/[\d.]+/g);
+                    if (values) {
+                        r = parseInt(values[0]);
+                        g = parseInt(values[1]);
+                        b = parseInt(values[2]);
+                        if (values[3]) a = parseFloat(values[3]);
+                    }
+                }
+                return { r, g, b, a };
             }
 
             init() {
@@ -474,7 +491,8 @@
                          const r = Math.round(this.baseRgb.r + (this.activeRgb.r - this.baseRgb.r) * t);
                          const g = Math.round(this.baseRgb.g + (this.activeRgb.g - this.baseRgb.g) * t);
                          const b = Math.round(this.baseRgb.b + (this.activeRgb.b - this.baseRgb.b) * t);
-                         color = `rgb(${r},${g},${b})`;
+                         const a = this.baseRgb.a + (this.activeRgb.a - this.baseRgb.a) * t;
+                         color = `rgba(${r},${g},${b},${a})`;
                     }
 
                     this.ctx.fillStyle = color;
