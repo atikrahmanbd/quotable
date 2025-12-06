@@ -24,32 +24,35 @@
     <meta name="theme-color" content="#1a202c">
     <title>Mutilat's Quotes API - Random Quotes Landing Page - Dev. By: Atik Rahman</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css?family=Exo:400,700');
 
         * {
             margin: 0px;
             padding: 0px;
+            box-sizing: border-box;
         }
 
         body {
             font-family: 'Exo', sans-serif;
+            overflow: hidden;
+            background-color: #1a202c; /* Updated to match original theme color */
+            position: relative;
         }
 
-        .area {
-            background: #1a202c;
-            background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-            background-size: 20px 20px;
+        /* DotGrid Styles - Z-index fixed to be behind content but consistent */
+        #dot-grid-container {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100vh;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            overflow: hidden;
+            z-index: 10; /* Lowest layer */
+            pointer-events: auto; /* Enable pointer events for the grid interaction */
         }
 
+        /* Original Flying Shapes Styles */
         .circles {
             position: absolute;
             top: 0;
@@ -57,6 +60,8 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
+            z-index: 20; /* Middle layer */
+            pointer-events: none; /* Let clicks pass through to DotGrid */
         }
 
         .circles li {
@@ -65,7 +70,7 @@
             list-style: none;
             width: 20px;
             height: 20px;
-            background: rgba(255, 255, 255, 0.2);
+            background: linear-gradient(135deg, #334EFC, #00EFAE);
             animation: animate 25s linear infinite;
             bottom: -150px;
         }
@@ -159,6 +164,28 @@
             }
         }
 
+        /* Content Overlay */
+        .content-overlay {
+            position: relative; /* Changed from absolute to relative to stack properly */
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            pointer-events: none;
+            z-index: 30; /* Highest z-index */
+        }
+
+        .content-container {
+            pointer-events: auto;
+            background: rgba(26, 32, 44, 0.01); /* Matching theme color with transparency */
+            backdrop-filter: blur(3px);
+            padding: 2rem 4rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
         .custom-blockquote {
             line-height: 1.5;
         }
@@ -209,21 +236,38 @@
 </head>
 
 <body>
-    <div class="area">
-        <div class="flex items-center justify-center w-full px-4 text-center md:w-1/2 md:mx-auto md:my-20 md:px-0">
+    <!-- DotGrid Background -->
+    <div id="dot-grid-container"></div>
+
+    <!-- Flying Shapes Background -->
+    <ul class="circles">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+
+    <!-- Main Content -->
+    <div class="content-overlay">
+        <div class="content-container flex items-center justify-center w-full px-4 text-center md:w-1/2 md:mx-auto md:my-20 md:px-0">
             <div class="w-full max-w-full">
-                <svg class="w-10 h-10 mx-auto mb-3 text-gray-400 dark:text-gray-600" aria-hidden="true"
+                <svg class="w-10 h-10 mx-auto mb-3" aria-hidden="true" style="color: #00EFAE;"
                     xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 14">
                     <path
                         d="M6 0H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v1a3 3 0 0 1-3 3H2a1 1 0 0 0 0 2h1a5.006 5.006 0 0 0 5-5V2a2 2 0 0 0-2-2Zm10 0h-4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v1a3 3 0 0 
 1-3 3h-1a1 1 0 0 0 0 2h1a5.006 5.006 0 0 0 5-5V2a2 2 0 0 0-2-2Z" />
                 </svg>
                 <blockquote id="random_quote" class="text-xl md:text-2xl lg:text-4xl italic custom-blockquote">
-                    "Fears are nothing more than a state of mind."
+                    <!-- Quote text -->
                 </blockquote>
                 <br>
-                <cite class="mt-4 block text-sm md:text-lg lg:text-2xl">-- <span id="author_name">Napoleon
-                        Hill</span></cite>
+                <cite class="mt-4 block text-sm md:text-lg lg:text-2xl">-- <span id="author_name"><!-- Author Name --></span></cite>
                 <div class="flex justify-center mt-4">
                     <div class="countdown-container">
                         <svg class="countdown" viewBox="0 0 50 50">
@@ -235,21 +279,222 @@
                 </div>
             </div>
         </div>
-        <ul class="circles">
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-        </ul>
     </div>
 
     <script>
+        // ==========================================
+        // CONFIGURATION
+        // ==========================================
+        const DOT_GRID_CONFIG = {
+            dotSize: 2.5,
+            gap: 24,
+            baseColor: '#6b7280', // Gray-500
+            activeColor: '#00EFAE', // Aqua Green
+            proximity: 150,    // Distance to trigger effect
+            shockRadius: 400,  // Radius of click shockwave
+            shockStrength: 4,  // Strength of click shockwave
+            returnDuration: 3, // Time to return to position
+            containerId: 'dot-grid-container'
+        };
+
+        // ==========================================
+        // DOT GRID LOGIC
+        // ==========================================
+        class DotGrid {
+            constructor(config) {
+                this.config = config;
+                this.container = document.getElementById(config.containerId);
+                this.canvas = document.createElement('canvas');
+                this.container.appendChild(this.canvas);
+                this.ctx = this.canvas.getContext('2d');
+
+                this.dots = [];
+                this.pointer = { x: 0, y: 0, lastX: 0, lastY: 0, vx: 0, vy: 0, speed: 0, lastTime: 0 };
+                this.rafId = null;
+
+                this.baseRgb = this.hexToRgb(config.baseColor);
+                this.activeRgb = this.hexToRgb(config.activeColor);
+
+                this.init();
+            }
+
+            hexToRgb(hex) {
+                const m = hex.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
+                if (!m) return { r: 0, g: 0, b: 0 };
+                return {
+                    r: parseInt(m[1], 16),
+                    g: parseInt(m[2], 16),
+                    b: parseInt(m[3], 16)
+                };
+            }
+
+            init() {
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+                window.addEventListener('mousemove', (e) => this.onMove(e));
+                window.addEventListener('click', (e) => this.onClick(e));
+                this.animate();
+            }
+
+            resize() {
+                const { width, height } = this.container.getBoundingClientRect();
+                const dpr = window.devicePixelRatio || 1;
+                
+                this.canvas.width = width * dpr;
+                this.canvas.height = height * dpr;
+                this.canvas.style.width = `${width}px`;
+                this.canvas.style.height = `${height}px`;
+                this.ctx.scale(dpr, dpr);
+
+                this.buildGrid(width, height);
+            }
+
+            buildGrid(width, height) {
+                const cols = Math.floor((width + this.config.gap) / (this.config.dotSize + this.config.gap));
+                const rows = Math.floor((height + this.config.gap) / (this.config.dotSize + this.config.gap));
+                const cell = this.config.dotSize + this.config.gap;
+
+                const gridW = cell * cols - this.config.gap;
+                const gridH = cell * rows - this.config.gap;
+
+                const startX = (width - gridW) / 2 + this.config.dotSize / 2;
+                const startY = (height - gridH) / 2 + this.config.dotSize / 2;
+
+                this.dots = [];
+                for (let y = 0; y < rows; y++) {
+                    for (let x = 0; x < cols; x++) {
+                        this.dots.push({
+                            cx: startX + x * cell,
+                            cy: startY + y * cell,
+                            xOffset: 0,
+                            yOffset: 0,
+                            originalX: startX + x * cell,
+                            originalY: startY + y * cell
+                        });
+                    }
+                }
+            }
+
+            onMove(e) {
+                const now = performance.now();
+                const dt = this.pointer.lastTime ? now - this.pointer.lastTime : 16;
+                
+                // Calculate cursor velocity (throttled/dampened)
+                const dx = e.clientX - this.pointer.lastX;
+                const dy = e.clientY - this.pointer.lastY;
+                
+                this.pointer.vx = (dx / dt) * 50; 
+                this.pointer.vy = (dy / dt) * 50;
+                this.pointer.speed = Math.hypot(this.pointer.vx, this.pointer.vy);
+
+                this.pointer.lastTime = now;
+                this.pointer.lastX = e.clientX;
+                this.pointer.lastY = e.clientY;
+                this.pointer.x = e.clientX;
+                this.pointer.y = e.clientY;
+
+                // Apply force to dots
+                const speedTrigger = 50;
+                this.dots.forEach(dot => {
+                    const dist = Math.hypot(dot.cx - this.pointer.x, dot.cy - this.pointer.y);
+                    
+                    if (this.pointer.speed > speedTrigger && dist < this.config.proximity) {
+                        gsap.killTweensOf(dot);
+                        
+                        const pushX = (this.pointer.vx * 0.2);
+                        const pushY = (this.pointer.vy * 0.2);
+
+                        gsap.to(dot, {
+                            xOffset: "+=" + pushX,
+                            yOffset: "+=" + pushY,
+                            duration: 0.2,
+                            ease: "power2.out",
+                            onComplete: () => {
+                                gsap.to(dot, {
+                                    xOffset: 0,
+                                    yOffset: 0,
+                                    duration: this.config.returnDuration,
+                                    ease: "elastic.out(1, 0.3)"
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+
+            onClick(e) {
+                this.dots.forEach(dot => {
+                    const dist = Math.hypot(dot.cx - e.clientX, dot.cy - e.clientY);
+                    
+                    if (dist < this.config.shockRadius) {
+                        gsap.killTweensOf(dot);
+                        
+                        const angle = Math.atan2(dot.cy - e.clientY, dot.cx - e.clientX);
+                        const force = (1 - dist / this.config.shockRadius) * this.config.shockStrength * 20;
+
+                        const pushX = Math.cos(angle) * force;
+                        const pushY = Math.sin(angle) * force;
+
+                        gsap.to(dot, {
+                            xOffset: "+=" + pushX,
+                            yOffset: "+=" + pushY,
+                            duration: 0.2,
+                            ease: "power2.out",
+                            onComplete: () => {
+                                gsap.to(dot, {
+                                    xOffset: 0,
+                                    yOffset: 0,
+                                    duration: this.config.returnDuration,
+                                    ease: "elastic.out(1, 0.3)"
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+
+            animate() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                const proxSq = this.config.proximity * this.config.proximity;
+
+                this.dots.forEach(dot => {
+                    const renderX = dot.cx + dot.xOffset;
+                    const renderY = dot.cy + dot.yOffset;
+                    
+                    // Color interaction
+                    const dx = renderX - this.pointer.x;
+                    const dy = renderY - this.pointer.y;
+                    const dsq = dx * dx + dy * dy;
+
+                    let color = this.config.baseColor;
+                    if (dsq <= proxSq) {
+                         const dist = Math.sqrt(dsq);
+                         const t = 1 - dist / this.config.proximity;
+                         const r = Math.round(this.baseRgb.r + (this.activeRgb.r - this.baseRgb.r) * t);
+                         const g = Math.round(this.baseRgb.g + (this.activeRgb.g - this.baseRgb.g) * t);
+                         const b = Math.round(this.baseRgb.b + (this.activeRgb.b - this.baseRgb.b) * t);
+                         color = `rgb(${r},${g},${b})`;
+                    }
+
+                    this.ctx.fillStyle = color;
+                    this.ctx.beginPath();
+                    this.ctx.arc(renderX, renderY, this.config.dotSize / 2, 0, Math.PI * 2);
+                    this.ctx.fill();
+                });
+
+                this.rafId = requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        // Initialize DotGrid with Config
+        document.addEventListener('DOMContentLoaded', () => {
+            new DotGrid(DOT_GRID_CONFIG);
+        });
+
+        // ==========================================
+        // QUOTE & COUNTDOWN LOGIC
+        // ==========================================
         const url = "/random?maxLength=200";
         const countdownElement = document.getElementById("countdown-number");
         const greenCircle = document.querySelector(".countdown .green");
@@ -285,10 +530,10 @@
                     console.log(err);
                 });
         }
-            // Start the countdown and quote generation
-                generateQuote();
-                const quoteVar = setInterval(generateQuote, interval);
-                setInterval(updateCountdown, 1000);
-            </script>
-            </body>
-            </html>
+        
+        generateQuote();
+        setInterval(generateQuote, interval);
+        setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>
