@@ -5,15 +5,8 @@
   "author": "Luke Peavey",
   "type": "module",
   "private": true,
-  "homepage": "https://github.com/lukepeavey/quotable",
-  "repository": {
-    "url": "https://github.com/lukepeavey/quotable"
-  },
-  "bugs": {
-    "url": "https://github.com/lukepeavey/quotable"
-  },
   "license": "MIT",
-  "main": "dist/index.js",
+  "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
     "dev": "NODE_ENV=development nodemon src/index.js",
@@ -38,7 +31,6 @@
     "mongodb": "^4.7.0",
     "mongoose": "^6.4.0",
     "ora": "^8.0.1",
-    "punycode": "^2.3.1",
     "query-string": "^7.1.1",
     "shortid": "^2.2.15"
   },

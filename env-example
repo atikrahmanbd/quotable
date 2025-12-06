@@ -1,0 +1,3 @@
+MONGODB_URI=mongodb+srv://<useranme>:<password>@<MongoDB Cluster URL>/<Database Name>?retryWrites=true&w=majority
+DB_USER=<useranme>
+DB_PASS=<password>

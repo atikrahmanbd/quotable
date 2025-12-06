@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="A beautiful landing page that displays inspirational quotes with a countdown timer.">
+    <meta name="keywords" content="quotes, inspirational quotes, landing page, countdown, animation">
+    <meta name="author" content="Atik Rahman">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Mutilat's Quotes API - Random Quotes Landing Page - Dev. By: Atik Rahman">
+    <meta property="og:description"
+        content="A beautiful landing page that displays inspirational quotes with a countdown timer.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://quotes.multilat.xyz/">
+    <meta property="og:image" content="https://quotes.multilat.xyz/preview.png">
+    <meta property="og:site_name" content="Mutilat's Quotes API">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Mutilat's Quotes API - Random Quotes Landing Page - Dev. By: Atik Rahman">
+    <meta name="twitter:description"
+        content="A beautiful landing page that displays inspirational quotes with a countdown timer.">
+    <meta name="twitter:image" content="https://quotes.multilat.xyz/preview.png">
+    <meta name="theme-color" content="#1a202c">
+    <title>Mutilat's Quotes API - Random Quotes Landing Page - Dev. By: Atik Rahman</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Exo:400,700');
+
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        body {
+            font-family: 'Exo', sans-serif;
+        }
+
+        .area {
+            background: #1a202c;
+            background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            overflow: hidden;
+        }
+
+        .circles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .circles li {
+            position: absolute;
+            display: block;
+            list-style: none;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            animation: animate 25s linear infinite;
+            bottom: -150px;
+        }
+
+        .circles li:nth-child(1) {
+            left: 25%;
+            width: 80px;
+            height: 80px;
+            animation-delay: 0s;
+        }
+
+        .circles li:nth-child(2) {
+            left: 10%;
+            width: 20px;
+            height: 20px;
+            animation-delay: 2s;
+            animation-duration: 12s;
+        }
+
+        .circles li:nth-child(3) {
+            left: 70%;
+            width: 20px;
+            height: 20px;
+            animation-delay: 4s;
+        }
+
+        .circles li:nth-child(4) {
+            left: 40%;
+            width: 60px;
+            height: 60px;
+            animation-delay: 0s;
+            animation-duration: 18s;
+        }
+
+        .circles li:nth-child(5) {
+            left: 65%;
+            width: 20px;
+            height: 20px;
+            animation-delay: 0s;
+        }
+
+        .circles li:nth-child(6) {
+            left: 75%;
+            width: 110px;
+            height: 110px;
+            animation-delay: 3s;
+        }
+
+        .circles li:nth-child(7) {
+            left: 35%;
+            width: 150px;
+            height: 150px;
+            animation-delay: 7s;
+        }
+
+        .circles li:nth-child(8) {
+            left: 50%;
+            width: 25px;
+            height: 25px;
+            animation-delay: 15s;
+            animation-duration: 45s;
+        }
+
+        .circles li:nth-child(9) {
+            left: 20%;
+            width: 15px;
+            height: 15px;
+            animation-delay: 2s;
+            animation-duration: 35s;
+        }
+
+        .circles li:nth-child(10) {
+            left: 85%;
+            width: 150px;
+            height: 150px;
+            animation-delay: 0s;
+            animation-duration: 11s;
+        }
+
+        @keyframes animate {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+                border-radius: 0;
+            }
+
+            100% {
+                transform: translateY(-1000px) rotate(720deg);
+                opacity: 0;
+                border-radius: 50%;
+            }
+        }
+
+        .custom-blockquote {
+            line-height: 1.5;
+        }
+
+        .countdown-container {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin-top: 20px;
+            border-radius: 50%;
+        }
+
+        .countdown {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+            border-radius: 50%;
+        }
+
+        .countdown circle {
+            fill: none;
+            stroke-width: 8;
+        }
+
+        .countdown circle.grey {
+            stroke: lightgrey;
+        }
+
+        .countdown circle.green {
+            stroke: green;
+            stroke-dasharray: 157;
+            stroke-dashoffset: 157;
+            transition: stroke-dashoffset 1s linear;
+        }
+
+        .countdown-number {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="area">
+        <div class="flex items-center justify-center w-full px-4 text-center md:w-1/2 md:mx-auto md:my-20 md:px-0">
+            <div class="w-full max-w-full">
+                <svg class="w-10 h-10 mx-auto mb-3 text-gray-400 dark:text-gray-600" aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 14">
+                    <path
+                        d="M6 0H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v1a3 3 0 0 1-3 3H2a1 1 0 0 0 0 2h1a5.006 5.006 0 0 0 5-5V2a2 2 0 0 0-2-2Zm10 0h-4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v1a3 3 0 0 1-3 3h-1a1 1 0 0 0 0 2h1a5.006 5.006 0 0 0 5-5V2a2 2 0 0 0-2-2Z" />
+                </svg>
+                <blockquote id="random_quote" class="text-xl md:text-2xl lg:text-4xl italic custom-blockquote">
+                    "Fears are nothing more than a state of mind."
+                </blockquote>
+                <br>
+                <cite class="mt-4 block text-sm md:text-lg lg:text-2xl">-- <span id="author_name">Napoleon
+                        Hill</span></cite>
+                <div class="flex justify-center mt-4">
+                    <div class="countdown-container">
+                        <svg class="countdown" viewBox="0 0 50 50">
+                            <circle class="grey" cx="25" cy="25" r="24"></circle>
+                            <circle class="green" cx="25" cy="25" r="24"></circle>
+                        </svg>
+                        <div id="countdown-number" class="countdown-number">30</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ul class="circles">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+
+    <script>
+        const url = "https://quotes.multilat.xyz/api/random?maxLength=200";
+        const countdownElement = document.getElementById("countdown-number");
+        const greenCircle = document.querySelector(".countdown .green");
+        const interval = 30000;
+        const radius = greenCircle.r.baseVal.value;
+        const circumference = 2 * Math.PI * radius;
+        greenCircle.style.strokeDasharray = `${circumference}`;
+        let timeLeft = interval / 1000;
+
+        function updateCountdown() {
+            countdownElement.textContent = timeLeft;
+            const offset = circumference - (timeLeft / (interval / 1000)) * circumference;
+            greenCircle.style.strokeDashoffset = offset;
+            timeLeft--;
+            if (timeLeft < 1) {
+                timeLeft = interval / 1000;
+            }
+        }
+
+        function generateQuote() {
+            fetch(url)
+                .then(function (data) {
+                    return data.json();
+                })
+                .then(function (data) {
+                    var random_quote = document.getElementById("random_quote");
+                    var author_name = document.getElementById("author_name");
+
+                    random_quote.innerHTML = '"' + data.content + '"';
+                    author_name.innerHTML = data.author;
+                })
+                .catch(function (err) {
+                    console.log(err);
+                });
+        }
+            // Start the countdown and quote generation
+                generateQuote();
+                const quoteVar = setInterval(generateQuote, interval);
+                setInterval(updateCountdown, 1000);
+            </script>
+            </body>
+            </html>

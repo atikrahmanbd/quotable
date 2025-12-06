@@ -25,6 +25,7 @@ router.get('/info/count', getDocumentCount)
 router.get('/quotes/random', randomQuotes)
 // router.get('/random', singleRandomQuote)
 router.get('/random', randomQuote)
+router.get('/home', randomQuote)
 
 router.get('/quotes', listQuotes)
 router.get('/quotes/:id', getQuoteById)
